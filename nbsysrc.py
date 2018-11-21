@@ -23,17 +23,25 @@ if answer == no:
 # TODO: maybe option to insert input at a particular line
 import sys
 import argparse
-# import platform
+import platform
 from pathlib import Path
 from typing import NamedTuple
 from collections import namedtuple
 
 
 class RcMetaData(NamedTuple):
-    etc_rc_path: str = "data/etc/rc.d/"
-    example_rc_path: str = "data/usr/pkg/share/examples/rc.d/"
-    rc_conf_file: str = "data/etc/rc.conf"
-    rc_local: str = "data/etc/rc.local"
+    if platform.system().lower() == 'netbsd' or 'darwin':
+        local_d = 'pkg'
+    else:
+        local_d = 'local'
+    if platform.system().lower() == 'darwin':
+        root_dir = 'data/'
+    else:
+        root_dir = '/'
+    etc_rc_path: str = f"{root_dir}etc/rc.d/"
+    example_rc_path: str = f"{root_dir}usr/{local_d}/share/examples/rc.d/"
+    rc_conf_file: str = f"{root_dir}etc/rc.conf"
+    rc_local: str = f"{root_dir}etc/rc.local"
 
 
 rc_data = RcMetaData()
