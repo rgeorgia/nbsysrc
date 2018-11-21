@@ -104,4 +104,4 @@ ENV/
 .DS_Store
 *.sqlite-journal
 .idea/
-
+data/
