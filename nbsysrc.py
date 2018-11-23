@@ -26,31 +26,9 @@ import argparse
 import platform
 from pathlib import Path
 from collections import namedtuple
+from nbrc_meta import NetBsdRc
 
-
-class RcMetaData():
-    def __init__(self):
-
-        self.flags_type: bool
-
-        if platform.system().lower() == 'netbsd' or platform.system().lower() == 'darwin':
-            local_d = 'pkg'
-        else:
-            local_d = 'local'
-        if platform.system().lower() == 'darwin':
-            root_dir = 'data/'
-        else:
-            root_dir = '/'
-
-        etc_rc_path: str = f"{root_dir}etc/rc.d/"
-        example_rc_path: str = f"{root_dir}usr/{local_d}/share/examples/rc.d/"
-        rc_conf_file: str = f"{root_dir}etc/rc.conf"
-        rc_local: str = f"{root_dir}etc/rc.local"
-        enabling_value: list = ['YES','TRUE','ON','1','NO','FALSE','OFF','0']
-
-
-
-rc_data = RcMetaData()
+rc_data = NetBsdRc(debug_test=True, test_data_dir='data/')
 
 
 def read_args():
