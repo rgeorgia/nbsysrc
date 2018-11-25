@@ -1,0 +1,2 @@
+# nbsysrc
+sysrc for NetBSD
