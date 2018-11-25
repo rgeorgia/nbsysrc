@@ -23,60 +23,22 @@ if answer == no:
 # TODO: maybe option to insert input at a particular line
 import sys
 import argparse
-import platform
-from pathlib import Path
-from collections import namedtuple
-from nbrc_meta import NetBsdRc
+import re
+from nbrc_meta import RcFactory
 
-rc_data = NetBsdRc(debug_test=True, test_data_dir='data/')
+rc_fac = RcFactory
+rc_data = rc_fac.create(debug_test=True, test_data_dir='data/')
 
 
+# TODO: need delete line option
 def read_args():
     parser = argparse.ArgumentParser(description="Command line to update rc.conf file")
-    parser.add_argument('rc_string', nargs='?', metavar='STRING TO ADD', help="This is what you want to add")
-    parser.add_argument('--list', dest='dest', choices=['etc', 'example'],
-                        help="List available services")
+    parser.add_argument('rc_string', nargs='?', metavar='SERVICE=VALUE', help="This is what you want to add")
+    parser.add_argument('--list', dest='dest', choices=['etc', 'installed'], help="List available services")
+    parser.add_argument('-a', dest='active_services', action='store_true', help="List active services launched from "
+                                                                                "/etc/rc.conf")
 
     return parser.parse_args()
-
-
-def read_rc_conf():
-    with open(rc_data.rc_conf_file) as f:
-        data = f.readlines()
-
-    return data
-
-
-def rc_dot_d_files(rc_d_dir: str):
-    p = Path(rc_d_dir)
-    file_list = [x.name for x in p.iterdir()]
-
-    return file_list
-
-
-def service_in_rc_conf(service: str, file_data: list):
-    result = namedtuple('result', 'found line_number current_status desired_status')
-    result.found = False
-
-    for line_num, line in enumerate(file_data):
-        if service.split('=')[0] == line.split('=')[0]:
-            result.found = True
-            result.line_number = line_num + 1
-            result.current_status = line.split('=')[1].strip()
-            result.desired_status = service.split('=')[1].strip()
-            break
-
-    return result
-
-
-def add_line(rc_string):
-    pass
-
-
-def change_line(service: str, result: namedtuple):
-    print(
-        f"Changing {service.replace(service.split('=')[1], result.current_status.upper())} to "
-        f"{service} at line {result.line_number}")
 
 
 def prt_dir(dir_listing: list):
@@ -95,33 +57,31 @@ def prt_dir(dir_listing: list):
             print(f'{x: <{col_width}}', end='')
 
 
-def check_input_format(rc_string: str):
-    format_good = False
-    flags_type = True if '_enable' in rc_string else False
-
-    return format_good
-
-
 def main():
-    rc_file_data = read_rc_conf()
+    rc_file_data = rc_data.read_rc_conf()
     args = read_args()
-    etc_rcd_files = rc_dot_d_files(rc_data.etc_rc_path)
-    example_rcd_files = rc_dot_d_files(rc_data.example_rc_path)
+    etc_rcd_files = rc_data.rc_dot_d_files(rc_data.etc_rc_path)
+    example_rcd_files = rc_data.rc_dot_d_files(rc_data.example_rc_path)
 
     if args.rc_string is not None:
-        rc_data.flags_type = True if '_flags' in args.rc_string else False
+        # rc_data.flags_type = True if '_flags' in args.rc_string else False
+        if not bool(re.search(r'\w.*?=\w.*?', args.rc_string)):
+            print(f"Invalid input format:\t service=value")
+            sys.exit(0)
 
         service = args.rc_string.split('=')[0]
-        result = service_in_rc_conf(service=args.rc_string, file_data=rc_file_data)
-        if result.found and result.current_status.upper() == result.desired_status.upper():
-            print(f"Service {args.rc_string} at line {result.line_number}, doing nothing")
+        result = rc_data.service_in_rc_conf(service=args.rc_string, file_data=rc_file_data)
+        # if result.found and bool(re.match(result.current_status, result.desired_status, re.IGNORECASE)):
+        if result.found and result.is_same:
+            print(f"Service {result.line_value} at line {result.line_number}, doing nothing")
             print("bye")
             sys.exit(0)
-        elif result.found and result.current_status != result.desired_status:
-            answer = input(f"You want to change {result.current_status} to "
-                           f"{result.desired_status}? [y/N]~> ")
+        # elif result.found and not bool(re.match(result.current_status, result.desired_status, re.IGNORECASE)):
+        elif result.found and not result.is_same:
+            answer = input(f"You want to change ({result.line_value}) to ({args.rc_string})? [y/N]~> ")
             if answer == 'y':
-                change_line(args.rc_string, result)
+                rc_data.replace_line(replacement=args.rc_string, to_replace=result.line_value)
+
         elif service not in etc_rcd_files and service not in example_rcd_files:
             print(f"Sevice {service} in not in {rc_data.etc_rc_path} or {rc_data.example_rc_path}")
             print(f"You will need to install it first.")
@@ -133,12 +93,14 @@ def main():
         else:
             answer = input(f"Add {args.rc_string} to rc.conf? [y/N]~> ").lower()
             if answer == 'y':
-                check_input_format(args.rc_string)
-                add_line(args.rc_string)
+                if rc_data.check_input_format(args.rc_string):
+                    rc_data.add_line(args.rc_string)
+                else:
+                    print(f"Bad input format, should take the form of \n\tservice=value {rc_data.enabling_value}")
 
     if args.dest == 'etc':
         prt_dir(etc_rcd_files)
-    elif args.dest == 'example':
+    elif args.dest == 'installed':
         prt_dir(example_rcd_files)
 
 
