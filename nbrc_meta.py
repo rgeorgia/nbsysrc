@@ -72,7 +72,7 @@ class RcMetaData:
     @staticmethod
     def service_in_rc_conf(service: str, file_data: list):
         # TODO: find matching lines, but that have been commented out
-        result_fields = ('found line_number line_value current_status desired_status is_same is_commented')
+        result_fields = 'found line_number line_value current_status desired_status is_same is_commented'
         result = namedtuple('result', result_fields)
         result.__new__.__defaults__ = (False, None, None, None, None, False, False)
 
@@ -88,9 +88,6 @@ class RcMetaData:
                 break
 
         return result
-
-    def change_line(self, service: str, result: namedtuple):
-        print(f"You want to change {service}")
 
     def replace_line(self, to_replace: str, replacement: str):
         with fileinput.input(files=self.rc_conf_file, inplace=True, backup='.bak') as f:
