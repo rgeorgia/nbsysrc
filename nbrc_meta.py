@@ -105,7 +105,7 @@ class RcMetaData:
 class NetBsdRc(RcMetaData):
     _flags_types: bool
 
-    def __init__(self, debug_test: bool = False, test_data_dir: str = 'data/'):
+    def __init__(self, debug_test: bool = False, test_data_dir: str = '/'):
         super().__init__(debug_test=debug_test, test_data_dir=test_data_dir)
 
         self._flags_types: bool = False
