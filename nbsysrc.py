@@ -21,6 +21,7 @@ if answer == no:
 """
 # TODO: verify input is proper rc.conf format.
 # TODO: maybe option to insert input at a particular line
+import os
 import sys
 import argparse
 import re
@@ -58,6 +59,10 @@ def prt_dir(dir_listing: list):
 
 
 def main():
+    if os.getuid() != 0:
+        print(f'You need to be root to run or have sudo access.')
+        sys.exit(0)
+
     rc_file_data = rc_data.read_rc_conf()
     args = read_args()
     etc_rcd_files = rc_data.rc_dot_d_files(rc_data.etc_rc_path)
