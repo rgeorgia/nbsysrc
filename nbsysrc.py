@@ -28,7 +28,7 @@ import re
 from nbrc_meta import RcFactory
 
 rc_fac = RcFactory
-rc_data = rc_fac.create(debug_test=True, test_data_dir='data/')
+rc_data = rc_fac.create(debug_test=True, test_data_dir='/')
 
 
 # TODO: need delete line option
