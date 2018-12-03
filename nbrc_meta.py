@@ -2,7 +2,10 @@ import fileinput
 import platform
 
 # TODO: consider using factory pattern that will allow the return of the proper RC class, based on the OS
+# TODO: add try block to write to rc.conf because you need to be root
 import re
+import os
+import sys
 from collections import namedtuple
 from pathlib import Path
 
@@ -26,10 +29,10 @@ class RcMetaData:
         self.debug_test = debug_test
         self.test_data_dir = test_data_dir
 
-        if platform.system().lower() == 'netbsd' or platform.system().lower() == 'darwin':
+        if platform.system().lower() == 'netbsd':
             self.local_d = 'pkg'
         else:
-            # This should take care of dragonfly, FreeBSD, HardenBSD
+            # This should take care of dragonfly, FreeBSD, HardenBSD and MacOS
             self.local_d = 'local'
 
         if self.debug_test:
@@ -146,7 +149,7 @@ class FreeBsdRc(RcMetaData):
 
 class DflyBsdRc(RcMetaData):
 
-    def __init__(self, debug_test: bool = False, test_data_dir: str = 'data/'):
+    def __init__(self, debug_test: bool = False, test_data_dir: str = '/'):
         super().__init__(debug_test=debug_test, test_data_dir=test_data_dir)
 
     def __repr__(self):

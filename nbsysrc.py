@@ -28,7 +28,9 @@ import re
 from nbrc_meta import RcFactory
 
 rc_fac = RcFactory
-rc_data = rc_fac.create(debug_test=True, test_data_dir='/')
+
+
+# rc_data = rc_fac.create(debug_test=False, test_data_dir='')
 
 
 # TODO: need delete line option
@@ -36,6 +38,8 @@ def read_args():
     parser = argparse.ArgumentParser(description="Command line to update rc.conf file")
     parser.add_argument('rc_string', nargs='?', metavar='SERVICE=VALUE', help="This is what you want to add")
     parser.add_argument('--list', dest='dest', choices=['etc', 'installed'], help="List available services")
+    parser.add_argument('--test_dir', dest='test_dir', nargs=1, type=str, help="Relative path for you testing purposes")
+    parser.add_argument('--debug', dest='test_debug', action='store_true', help="Use when testing new functionality")
     parser.add_argument('-a', dest='active_services', action='store_true', help="List active services launched from "
                                                                                 "/etc/rc.conf")
 
@@ -59,12 +63,13 @@ def prt_dir(dir_listing: list):
 
 
 def main():
-    if os.getuid() != 0:
-        print(f'You need to be root to run or have sudo access.')
-        sys.exit(0)
+    args = read_args()
+    test_data_dir = (lambda x: ''.join(args.test_dir) if args.test_dir is not None else '')(args)
+    print(test_data_dir)
+    rc_data = rc_fac.create(debug_test=args.test_debug, test_data_dir=test_data_dir)
 
     rc_file_data = rc_data.read_rc_conf()
-    args = read_args()
+
     etc_rcd_files = rc_data.rc_dot_d_files(rc_data.etc_rc_path)
     example_rcd_files = rc_data.rc_dot_d_files(rc_data.example_rc_path)
 
