@@ -5,8 +5,9 @@ Written with Python 3.7+ in mind.
 
 Usage:
 ```bash
-nbsysrc.py --help
-usage: nbsysrc.py [-h] [--list {etc,installed}] [-a] [SERVICE=VALUE]
+usage: nbsysrc.py [-h] [--list {etc,installed}] [--test_dir TEST_DIR]
+                  [--debug] [-a]
+                  [SERVICE=VALUE]
 
 Command line to update rc.conf file
 
@@ -16,7 +17,11 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --list {etc,installed}
-                        List available services
+                        List available services. --list etc lists everything
+                        in the /etc/rc.d dir. While installed lists
+                        /usr/pkg/share/examples/rc.d
+  --test_dir TEST_DIR   Relative path for you testing purposes
+  --debug               Use when testing new functionality
   -a                    List active services launched from /etc/rc.conf
   ```
   
