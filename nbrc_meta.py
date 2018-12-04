@@ -11,6 +11,7 @@ from pathlib import Path
 
 
 class RcFactory(object):
+    """Factory class: returns the class based on which OS your are running."""
     @staticmethod
     def create(test_data_dir: str, debug_test: bool):
         if platform.system() == 'NetBSD':
@@ -67,6 +68,7 @@ class RcMetaData:
 
     @staticmethod
     def rc_dot_d_files(rc_d_dir: str):
+        """List files in /etc/rc.d"""
         p = Path(rc_d_dir)
         file_list = [x.name for x in p.iterdir()]
 

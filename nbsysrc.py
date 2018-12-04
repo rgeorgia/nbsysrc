@@ -1,5 +1,7 @@
+#!/usr/pkg/bin/python3.7
 """NetBSD version of sysrc
-This script takes an input that will be appended to  /etc/rc.conf, consiquently it needs to be run as root or sudo.
+This script takes an input that will be appended to  /etc/rc.conf, consiquently it needs to be run
+as root or sudo.
 1. get input from user
 2. check if that is already in rc.conf, if not
 3. check if the service is in /etc/rc.d, if not
@@ -27,21 +29,23 @@ import argparse
 import re
 from nbrc_meta import RcFactory
 
-rc_fac = RcFactory
-
-
-# rc_data = rc_fac.create(debug_test=False, test_data_dir='')
+#rc_fac = RcFactory
 
 
 # TODO: need delete line option
 def read_args():
     parser = argparse.ArgumentParser(description="Command line to update rc.conf file")
-    parser.add_argument('rc_string', nargs='?', metavar='SERVICE=VALUE', help="This is what you want to add")
-    parser.add_argument('--list', dest='dest', choices=['etc', 'installed'], help="List available services")
-    parser.add_argument('--test_dir', dest='test_dir', nargs=1, type=str, help="Relative path for you testing purposes")
-    parser.add_argument('--debug', dest='test_debug', action='store_true', help="Use when testing new functionality")
-    parser.add_argument('-a', dest='active_services', action='store_true', help="List active services launched from "
-                                                                                "/etc/rc.conf")
+    parser.add_argument('rc_string', nargs='?', metavar='SERVICE=VALUE',
+                        help="This is what you want to add")
+    parser.add_argument('--list', dest='dest', choices=['etc', 'installed'],
+                        help="List available services. --list etc lists everything in the \
+                                /etc/rc.d dir. While installed lists /usr/pkg/share/examples/rc.d")
+    parser.add_argument('--test_dir', dest='test_dir', nargs=1, type=str,
+                        help="Relative path for you testing purposes")
+    parser.add_argument('--debug', dest='test_debug', action='store_true',
+                        help="Use when testing new functionality")
+    parser.add_argument('-a', dest='active_services', action='store_true',
+                        help="List active services launched from /etc/rc.conf")
 
     return parser.parse_args()
 
@@ -63,6 +67,7 @@ def prt_dir(dir_listing: list):
 
 
 def main():
+    rc_fac = RcFactory
     args = read_args()
     test_data_dir = (lambda x: ''.join(args.test_dir) if args.test_dir is not None else '')(args)
     print(test_data_dir)
@@ -81,14 +86,13 @@ def main():
 
         service = args.rc_string.split('=')[0]
         result = rc_data.service_in_rc_conf(service=args.rc_string, file_data=rc_file_data)
-        # if result.found and bool(re.match(result.current_status, result.desired_status, re.IGNORECASE)):
         if result.found and result.is_same:
             print(f"Service {result.line_value} at line {result.line_number}, doing nothing")
             print("bye")
             sys.exit(0)
-        # elif result.found and not bool(re.match(result.current_status, result.desired_status, re.IGNORECASE)):
         elif result.found and not result.is_same:
-            answer = input(f"You want to change ({result.line_value}) to ({args.rc_string})? [y/N]~> ")
+            answer = input(f"You want to change ({result.line_value}) to "
+                           f"({args.rc_string})? [y/N]~> ")
             if answer == 'y':
                 rc_data.replace_line(replacement=args.rc_string, to_replace=result.line_value)
 
@@ -106,7 +110,10 @@ def main():
                 if rc_data.check_input_format(args.rc_string):
                     rc_data.add_line(args.rc_string)
                 else:
-                    print(f"Bad input format, should take the form of \n\tservice=value {rc_data.enabling_value}")
+                    print(f"Bad input format, should take the form of \n\t"
+                          f"service=value {rc_data.enabling_value}")
+    else:
+        print(args)
 
     if args.dest == 'etc':
         prt_dir(etc_rcd_files)
