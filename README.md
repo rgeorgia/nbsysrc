@@ -1,7 +1,7 @@
 # nbsysrc
 This started out to be a simple sysrc for NetBSD; however there may be some room to allow for FreeBSD, HardenedBSD and DragonflyBSD.
 
-Written with Python 3.6+ in mind.
+Written with Python 3.7+ in mind.
 
 Usage:
 ```bash
