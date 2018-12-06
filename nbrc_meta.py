@@ -1,27 +1,10 @@
 import fileinput
 import platform
 
-# TODO: consider using factory pattern that will allow the return of the proper RC class, based on the OS
 # TODO: add try block to write to rc.conf because you need to be root
 import re
 from collections import namedtuple
 from pathlib import Path
-
-
-class RcFactory:
-    """Factory class: returns the class based on which OS your are running."""
-    @staticmethod
-    def create(test_data_dir: str, debug_test: bool):
-        if platform.system() == 'NetBSD':
-            obj = NetBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
-        elif platform.system() == 'FreeBSD':
-            obj = FreeBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
-        elif platform.system() == 'DragonFly':
-            obj = DflyBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
-        else:
-            obj = NetBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
-
-        return obj
 
 
 class RcMetaData:
@@ -137,26 +120,3 @@ class NetBsdRc(RcMetaData):
             return False
 
         return True
-
-
-class FreeBsdRc(RcMetaData):
-
-    def __init__(self, debug_test: bool = False, test_data_dir: str = 'data/'):
-        super().__init__(debug_test=debug_test, test_data_dir=test_data_dir)
-
-    def __repr__(self):
-        return f"{self.__class__} "
-
-
-class DflyBsdRc(RcMetaData):
-
-    def __init__(self, debug_test: bool = False, test_data_dir: str = '/'):
-        super().__init__(debug_test=debug_test, test_data_dir=test_data_dir)
-
-    def __repr__(self):
-        return f"{self.__class__} "
-
-    def check_input_format(self, rc_string: str):
-        format_good = False
-
-        return format_good

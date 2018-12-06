@@ -28,8 +28,6 @@ import argparse
 import re
 from nbrc_meta import RcFactory
 
-#rc_fac = RcFactory
-
 
 # TODO: need delete line option
 def read_args():
