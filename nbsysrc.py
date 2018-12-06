@@ -23,7 +23,6 @@ if answer == no:
 """
 # TODO: verify input is proper rc.conf format.
 # TODO: maybe option to insert input at a particular line
-import os
 import sys
 import argparse
 import re
@@ -34,6 +33,7 @@ from nbrc_meta import RcFactory
 
 # TODO: need delete line option
 def read_args():
+    """Read and process command line args"""
     parser = argparse.ArgumentParser(description="Command line to update rc.conf file")
     parser.add_argument('rc_string', nargs='?', metavar='SERVICE=VALUE',
                         help="This is what you want to add")
@@ -51,22 +51,24 @@ def read_args():
 
 
 def prt_dir(dir_listing: list):
+    """setup printing"""
     maxcolumns = 8
     col_width = 0
     padding = 2
 
-    for y in dir_listing:
-        if len(y) > col_width:
-            col_width = len(y) + padding
+    for file_name in dir_listing:
+        if len(file_name) > col_width:
+            col_width = len(file_name) + padding
 
-    for cnt, x in enumerate(sorted(dir_listing), start=1):
+    for cnt, f_name in enumerate(sorted(dir_listing), start=1):
         if cnt % maxcolumns == 0:
             print()
         else:
-            print(f'{x: <{col_width}}', end='')
+            print(f'{f_name: <{col_width}}', end='')
 
 
 def main():
+    """main -  it all starts here"""
     rc_fac = RcFactory
     args = read_args()
     test_data_dir = (lambda x: ''.join(args.test_dir) if args.test_dir is not None else '')(args)

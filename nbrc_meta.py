@@ -4,27 +4,28 @@ import platform
 # TODO: consider using factory pattern that will allow the return of the proper RC class, based on the OS
 # TODO: add try block to write to rc.conf because you need to be root
 import re
-import os
-import sys
 from collections import namedtuple
 from pathlib import Path
 
 
-class RcFactory(object):
+class RcFactory:
     """Factory class: returns the class based on which OS your are running."""
     @staticmethod
     def create(test_data_dir: str, debug_test: bool):
         if platform.system() == 'NetBSD':
-            return NetBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
+            obj = NetBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
         elif platform.system() == 'FreeBSD':
-            return FreeBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
+            obj = FreeBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
         elif platform.system() == 'DragonFly':
-            return DflyBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
+            obj = DflyBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
         else:
-            return NetBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
+            obj = NetBsdRc(test_data_dir=test_data_dir, debug_test=debug_test)
+
+        return obj
 
 
 class RcMetaData:
+    """base class """
     def __init__(self, test_data_dir: str, debug_test: bool):
 
         self.debug_test = debug_test
@@ -61,18 +62,16 @@ class RcMetaData:
         pass
 
     def read_rc_conf(self):
-        with open(self.rc_conf_file) as f:
-            data = f.readlines()
-
+        with open(self.rc_conf_file) as f_name:
+            data = f_name.readlines()
         return data
 
     @staticmethod
     def rc_dot_d_files(rc_d_dir: str):
         """List files in /etc/rc.d"""
         p = Path(rc_d_dir)
-        file_list = [x.name for x in p.iterdir()]
+        return [x.name for x in p.iterdir()]
 
-        return file_list
 
     @staticmethod
     def service_in_rc_conf(service: str, file_data: list):
