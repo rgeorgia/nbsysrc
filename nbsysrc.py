@@ -26,7 +26,7 @@ if answer == no:
 import sys
 import argparse
 import re
-from nbrc_meta import RcFactory
+from nbrc_meta import NetBsdRc
 
 
 # TODO: need delete line option
@@ -40,8 +40,6 @@ def read_args():
                                 /etc/rc.d dir. While installed lists /usr/pkg/share/examples/rc.d")
     parser.add_argument('--test_dir', dest='test_dir', nargs=1, type=str,
                         help="Relative path for you testing purposes")
-    parser.add_argument('--debug', dest='test_debug', action='store_true',
-                        help="Use when testing new functionality")
     parser.add_argument('-a', dest='active_services', action='store_true',
                         help="List active services launched from /etc/rc.conf")
 
@@ -67,11 +65,9 @@ def prt_dir(dir_listing: list):
 
 def main():
     """main -  it all starts here"""
-    rc_fac = RcFactory
     args = read_args()
     test_data_dir = (lambda x: ''.join(args.test_dir) if args.test_dir is not None else '')(args)
-    print(test_data_dir)
-    rc_data = rc_fac.create(debug_test=args.test_debug, test_data_dir=test_data_dir)
+    rc_data = NetBsdRc(test_data_dir=test_data_dir + '/')
 
     rc_file_data = rc_data.read_rc_conf()
 

@@ -7,20 +7,14 @@ from collections import namedtuple
 from pathlib import Path
 
 
-class RcMetaData:
+class NetBsdRc:
     """base class """
-    def __init__(self, test_data_dir: str, debug_test: bool):
+    def __init__(self,  test_data_dir: str = '/'):
 
-        self.debug_test = debug_test
         self.test_data_dir = test_data_dir
+        self.local_d = 'pkg'
 
-        if platform.system().lower() == 'netbsd':
-            self.local_d = 'pkg'
-        else:
-            # This should take care of dragonfly, FreeBSD, HardenBSD and MacOS
-            self.local_d = 'local'
-
-        if self.debug_test:
+        if self.test_data_dir is not '/':
             self.root_dir = self.test_data_dir
         else:
             self.root_dir = '/'
@@ -87,18 +81,6 @@ class RcMetaData:
     def add_line(self, rc_string: str):
         with open(self.rc_conf_file, "a") as f:
             f.write(rc_string)
-
-
-class NetBsdRc(RcMetaData):
-    _flags_types: bool
-
-    def __init__(self, debug_test: bool = False, test_data_dir: str = '/'):
-        super().__init__(debug_test=debug_test, test_data_dir=test_data_dir)
-
-        self._flags_types: bool = False
-
-    def __repr__(self):
-        return f"{self.__class__} flags: {self._flags_types} debug: {self.debug_test}"
 
     @property
     def flag_types(self):
