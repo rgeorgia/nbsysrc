@@ -3,10 +3,12 @@ This started out to be a simple sysrc for NetBSD; however there may be some room
 
 Written with Python 3.7+ in mind.
 
+#### NOTE:
+Added develop branch to use click instead of argparse
+
 Usage:
 ```bash
-usage: nbsysrc.py [-h] [--list {etc,installed}] [--test_dir TEST_DIR]
-                  [--debug] [-a]
+  usage: nbsysrc.py [-h] [--list {etc,installed}] [--test_dir TEST_DIR] [-a]
                   [SERVICE=VALUE]
 
 Command line to update rc.conf file
@@ -21,7 +23,6 @@ optional arguments:
                         in the /etc/rc.d dir. While installed lists
                         /usr/pkg/share/examples/rc.d
   --test_dir TEST_DIR   Relative path for you testing purposes
-  --debug               Use when testing new functionality
   -a                    List active services launched from /etc/rc.conf
   ```
   
