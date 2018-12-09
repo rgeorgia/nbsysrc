@@ -63,6 +63,10 @@ def prt_dir(dir_listing: list):
             print(f'{f_name: <{col_width}}', end='')
 
 
+def process_flag(rc_string):
+    print(f"Flag type {rc_string}")
+
+
 def main():
     """main -  it all starts here"""
     args = read_args()
@@ -75,11 +79,16 @@ def main():
     example_rcd_files = rc_data.rc_dot_d_files(rc_data.example_rc_path)
 
     if args.rc_string is not None:
-        # rc_data.flags_type = True if '_flags' in args.rc_string else False
+
         if not bool(re.search(r'\w.*?=\w.*?', args.rc_string)):
             print(f"Invalid input format:\t service=value")
             sys.exit(0)
 
+        # rc_data.flags_type = True if '_flags' in args.rc_string else False
+        if '_flags' in args.rc_string:
+            process_flag(args.rc_string)
+            return
+        
         service = args.rc_string.split('=')[0]
         result = rc_data.service_in_rc_conf(service=args.rc_string, file_data=rc_file_data)
         if result.found and result.is_same:
@@ -108,8 +117,6 @@ def main():
                 else:
                     print(f"Bad input format, should take the form of \n\t"
                           f"service=value {rc_data.enabling_value}")
-    else:
-        print(args)
 
     if args.dest == 'etc':
         prt_dir(etc_rcd_files)
