@@ -1,4 +1,4 @@
-#!/usr/pkg/bin/python3.7
+#!/usr/bin/env python3.7
 """NetBSD version of sysrc
 This script takes an input that will be appended to  /etc/rc.conf, consiquently it needs to be run
 as root or sudo.
@@ -35,13 +35,15 @@ def read_args():
     parser = argparse.ArgumentParser(description="Command line to update rc.conf file")
     parser.add_argument('rc_string', nargs='?', metavar='SERVICE=VALUE',
                         help="This is what you want to add")
-    parser.add_argument('--list', dest='dest', choices=['etc', 'installed'],
+    parser.add_argument('--list', dest='dest', choices=['etc', 'downloaded'],
                         help="List available services. --list etc lists everything in the \
                                 /etc/rc.d dir. While installed lists /usr/pkg/share/examples/rc.d")
     parser.add_argument('--test_dir', dest='test_dir', nargs=1, type=str,
                         help="Relative path for you testing purposes")
     parser.add_argument('-a', dest='active_services', action='store_true',
                         help="List active services launched from /etc/rc.conf")
+    parser.add_argument('-s','--show', dest='show_rc_conf', action='store_true',
+                        help="Display the /etc/rc.conf file.")
 
     return parser.parse_args()
 
@@ -65,6 +67,11 @@ def prt_dir(dir_listing: list):
 
 def process_flag(rc_string):
     print(f"Flag type {rc_string}")
+
+
+def prt_rc_conf(rc_file):
+    with open(rc_file) as f:
+        print(f.readlines())
 
 
 def main():
@@ -118,9 +125,12 @@ def main():
                     print(f"Bad input format, should take the form of \n\t"
                           f"service=value {rc_data.enabling_value}")
 
+    if args.show_rc_conf:
+        prt_rc_conf(rc_file=rc_file_data)
+
     if args.dest == 'etc':
         prt_dir(etc_rcd_files)
-    elif args.dest == 'installed':
+    elif args.dest == 'downloaded':
         prt_dir(example_rcd_files)
 
 
