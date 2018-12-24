@@ -13,6 +13,7 @@ class NetBsdRc:
 
         self.test_data_dir = test_data_dir
         self.local_d = 'pkg'
+        self._flags_types = None
 
         if self.test_data_dir is not '/':
             self.root_dir = self.test_data_dir
@@ -35,9 +36,6 @@ class NetBsdRc:
     def rc_local(self):
         return f"{self.root_dir}etc/rc.local"
 
-    def check_input_format(self, rc_string: str):
-        pass
-
     def read_rc_conf(self):
         with open(self.rc_conf_file) as f_name:
             data = f_name.readlines()
@@ -51,20 +49,20 @@ class NetBsdRc:
 
 
     @staticmethod
-    def service_in_rc_conf(service: str, file_data: list):
+    def service_in_rc_conf(service_key: str, file_data: list, service_value: str=None):
         # TODO: find matching lines, but that have been commented out
         result_fields = 'found line_number line_value current_status desired_status is_same is_commented'
         result = namedtuple('result', result_fields)
         result.__new__.__defaults__ = (False, None, None, None, None, False, False)
 
         for line_num, line in enumerate(file_data):
-            if service.split('=')[0] in line.split('=')[0]:
+            if service_key in line.split('=')[0]:
                 result.found = True
                 result.line_number = line_num + 1
                 result.current_status = line.split('=')[1].strip()
-                result.desired_status = service.split('=')[1].strip()
+                result.desired_status = service_value
                 result.line_value = line.strip()
-                result.is_same = True if service.split('=')[0] == line.split('=')[0] else False
+                result.is_same = True if result.current_status == result.desired_status else False
                 result.is_commented = True if "#" in line.split('=')[0] else False
                 break
 

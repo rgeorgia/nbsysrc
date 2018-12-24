@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.7
 """NetBSD version of sysrc
-This script takes an input that will be appended to  /etc/rc.conf, consiquently it needs to be run
+This script takes an input that will be appended to  /etc/rc.conf, consequently it needs to be run
 as root or sudo.
 1. get input from user
 2. check if that is already in rc.conf, if not
@@ -21,8 +21,7 @@ if answer == no:
  else:
     append to  rc.conf
 """
-# TODO: verify input is proper rc.conf format.
-# TODO: maybe option to insert input at a particular line
+
 import sys
 import argparse
 import re
@@ -35,15 +34,20 @@ def read_args():
     parser = argparse.ArgumentParser(description="Command line to update rc.conf file")
     parser.add_argument('rc_string', nargs='?', metavar='SERVICE=VALUE',
                         help="This is what you want to add")
-    parser.add_argument('--list', dest='dest', choices=['etc', 'downloaded'],
-                        help="List available services. --list etc lists everything in the \
-                                /etc/rc.d dir. While installed lists /usr/pkg/share/examples/rc.d")
+    list_group = parser.add_mutually_exclusive_group()
+    # parser.add_argument('--list', dest='dest', choices=['etc', 'downloaded'],
+    #                     help="List available services. --list etc lists everything in the \
+    #                             /etc/rc.d dir. While installed lists /usr/pkg/share/examples/rc.d")
     parser.add_argument('--test_dir', dest='test_dir', nargs=1, type=str,
                         help="Relative path for you testing purposes")
-    parser.add_argument('-a', dest='active_services', action='store_true',
+    list_group.add_argument('--list-rc', dest='rc_services', action='store_true',
                         help="List active services launched from /etc/rc.conf")
-    parser.add_argument('-s','--show', dest='show_rc_conf', action='store_true',
+    list_group.add_argument('--list-all', dest='active_services', action='store_true',
+                        help="Show all service that are activated at startup.")
+    parser.add_argument('--show-rc', dest='show_rc_conf', action='store_true',
                         help="Display the /etc/rc.conf file.")
+
+    #
 
     return parser.parse_args()
 
@@ -74,6 +78,10 @@ def prt_rc_conf(rc_file):
         print(f.readlines())
 
 
+def lookup_up(rc_string):
+    print(rc_string)
+
+
 def main():
     """main -  it all starts here"""
     args = read_args()
@@ -88,8 +96,9 @@ def main():
     if args.rc_string is not None:
 
         if not bool(re.search(r'\w.*?=\w.*?', args.rc_string)):
-            print(f"Invalid input format:\t service=value")
-            sys.exit(0)
+            result = rc_data.service_in_rc_conf(service_key=args.rc_string, file_data=rc_file_data)
+            print(result.line_value)
+            return
 
         # rc_data.flags_type = True if '_flags' in args.rc_string else False
         if '_flags' in args.rc_string:
@@ -97,8 +106,9 @@ def main():
             return
         
         service = args.rc_string.split('=')[0]
-        result = rc_data.service_in_rc_conf(service=args.rc_string, file_data=rc_file_data)
-        if result.found and result.is_same:
+        value = args.rc_string.split('=')[1]
+        result = rc_data.service_in_rc_conf(service_key=service, service_value=value, file_data=rc_file_data)
+        if result.found and (result.desired_status == result.current_status):
             print(f"Service {result.line_value} at line {result.line_number}, doing nothing")
             print("bye")
             sys.exit(0)
@@ -128,11 +138,12 @@ def main():
     if args.show_rc_conf:
         prt_rc_conf(rc_file=rc_file_data)
 
-    if args.dest == 'etc':
-        prt_dir(etc_rcd_files)
-    elif args.dest == 'downloaded':
-        prt_dir(example_rcd_files)
+    # if args.dest == 'etc':
+    #     prt_dir(etc_rcd_files)
+    # elif args.dest == 'downloaded':
+    #     prt_dir(example_rcd_files)
 
 
 if __name__ == '__main__':
     main()
+    sys.exit(0)
