@@ -108,11 +108,11 @@ def main():
         service = args.rc_string.split('=')[0]
         value = args.rc_string.split('=')[1]
         result = rc_data.service_in_rc_conf(service_key=service, service_value=value, file_data=rc_file_data)
-        if result.found and (result.desired_status == result.current_status):
+        if result.found and result.is_same and not result.is_commented:
             print(f"Service {result.line_value} at line {result.line_number}, doing nothing")
             print("bye")
             sys.exit(0)
-        elif result.found and not result.is_same:
+        elif (result.found and not result.is_same) or (result.found and result.is_commented):
             answer = input(f"You want to change ({result.line_value}) to "
                            f"({args.rc_string})? [y/N]~> ")
             if answer == 'y':
