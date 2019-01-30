@@ -25,6 +25,7 @@ if answer == no:
 import sys
 import argparse
 import re
+import subprocess
 from nbrc_meta import NetBsdRc
 
 
@@ -114,6 +115,7 @@ def main():
             print("bye")
             sys.exit(0)
         elif (result.found and not result.is_same) or (result.found and result.is_commented):
+            input((result.found, result.is_same, result.is_commented))
             answer = input(f"You want to change ({result.line_value}) to "
                            f"({args.rc_string})? [y/N]~> ")
             if answer == 'y':
@@ -141,6 +143,9 @@ def main():
 
     if args.rc_services:
         rc_data.list_rc_services()
+
+    if args.active_services:
+        subprocess.run(["service", "-e"])
 
     # if args.dest == 'etc':
     #     prt_dir(etc_rcd_files)

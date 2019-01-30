@@ -74,6 +74,14 @@ class NetBsdRc:
                 result.is_same = True if result.current_status == result.desired_status else False
                 result.is_commented = True if "#" in line.split('=')[0] else False
                 break
+            else:
+                result.found = False
+                result.line_number = None
+                result.current_status = None
+                result.desired_status = service_value
+                result.line_value = None
+                result.is_same = True if result.current_status == result.desired_status else False
+                result.is_commented = True if "#" in line.split('=')[0] else False
 
         return result
 
