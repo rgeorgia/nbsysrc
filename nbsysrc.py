@@ -139,6 +139,9 @@ def main():
     if args.show_rc_conf:
         prt_rc_conf(rc_file=rc_data.rc_conf_file)
 
+    if args.rc_services:
+        rc_data.list_rc_services()
+
     # if args.dest == 'etc':
     #     prt_dir(etc_rcd_files)
     # elif args.dest == 'downloaded':

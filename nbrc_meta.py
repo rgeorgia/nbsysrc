@@ -1,7 +1,5 @@
 import fileinput
 import platform
-
-# TODO: add try block to write to rc.conf because you need to be root
 import re
 from collections import namedtuple
 from pathlib import Path
@@ -33,13 +31,24 @@ class NetBsdRc:
         return f"{self.root_dir}etc/rc.conf"
 
     @property
-    def rc_local(self):
+    def rc_local_file(self):
         return f"{self.root_dir}etc/rc.local"
 
     def read_rc_conf(self):
         with open(self.rc_conf_file) as f_name:
             data = f_name.readlines()
         return data
+
+    def read_rc_local(self):
+        with open(self.rc_local_file) as f_name:
+            data = f_name.readlines()
+        return data
+
+    def list_rc_services(self):
+        data = self.read_rc_conf()
+        for line in data:
+            if "=YES" in line.upper() and "#" not in line:
+                print(line.strip())
 
     @staticmethod
     def rc_dot_d_files(rc_d_dir: str):
