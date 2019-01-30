@@ -106,3 +106,4 @@ ENV/
 *.sqlite-journal
 .idea/
 data/
+*.swp

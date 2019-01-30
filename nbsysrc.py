@@ -75,7 +75,8 @@ def process_flag(rc_string):
 
 def prt_rc_conf(rc_file):
     with open(rc_file) as f:
-        print(f.readlines())
+        for line in f.readlines():
+            print(line.strip())
 
 
 def lookup_up(rc_string):
@@ -136,7 +137,7 @@ def main():
                           f"service=value {rc_data.enabling_value}")
 
     if args.show_rc_conf:
-        prt_rc_conf(rc_file=rc_file_data)
+        prt_rc_conf(rc_file=rc_data.rc_conf_file)
 
     # if args.dest == 'etc':
     #     prt_dir(etc_rcd_files)
