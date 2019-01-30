@@ -115,7 +115,6 @@ def main():
             print("bye")
             sys.exit(0)
         elif (result.found and not result.is_same) or (result.found and result.is_commented):
-            input((result.found, result.is_same, result.is_commented))
             answer = input(f"You want to change ({result.line_value}) to "
                            f"({args.rc_string})? [y/N]~> ")
             if answer == 'y':
