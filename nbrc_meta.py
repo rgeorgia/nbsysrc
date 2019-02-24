@@ -7,16 +7,17 @@ from pathlib import Path
 
 class NetBsdRc:
     """base class """
-    def __init__(self,  test_data_dir: str = '/'):
+
+    def __init__(self, test_data_dir: str = "/"):
 
         self.test_data_dir = test_data_dir
-        self.local_d = 'pkg'
+        self.local_d = "pkg"
         self._flags_types = None
 
-        if self.test_data_dir is not '/':
+        if self.test_data_dir is not "/":
             self.root_dir = self.test_data_dir
         else:
-            self.root_dir = '/'
+            self.root_dir = "/"
 
     @property
     def etc_rc_path(self):
@@ -56,23 +57,26 @@ class NetBsdRc:
         p = Path(rc_d_dir)
         return [x.name for x in p.iterdir()]
 
-
     @staticmethod
-    def service_in_rc_conf(service_key: str, file_data: list, service_value: str=None):
+    def service_in_rc_conf(
+        service_key: str, file_data: list, service_value: str = None
+    ):
         # TODO: find matching lines, but that have been commented out
-        result_fields = 'found line_number line_value current_status desired_status is_same is_commented'
-        result = namedtuple('result', result_fields)
+        result_fields = "found line_number line_value current_status desired_status is_same is_commented"
+        result = namedtuple("result", result_fields)
         result.__new__.__defaults__ = (False, None, None, None, None, False, False)
 
         for line_num, line in enumerate(file_data):
-            if service_key in line.split('=')[0]:
+            if service_key in line.split("=")[0]:
                 result.found = True
                 result.line_number = line_num + 1
-                result.current_status = line.split('=')[1].strip()
+                result.current_status = line.split("=")[1].strip()
                 result.desired_status = service_value
                 result.line_value = line.strip()
-                result.is_same = True if result.current_status == result.desired_status else False
-                result.is_commented = True if "#" in line.split('=')[0] else False
+                result.is_same = (
+                    True if result.current_status == result.desired_status else False
+                )
+                result.is_commented = True if "#" in line.split("=")[0] else False
                 break
             else:
                 result.found = False
@@ -80,13 +84,15 @@ class NetBsdRc:
                 result.current_status = None
                 result.desired_status = service_value
                 result.line_value = None
-                result.is_same = True if result.current_status == result.desired_status else False
-                result.is_commented = True if "#" in line.split('=')[0] else False
+                result.is_same = (
+                    True if result.current_status == result.desired_status else False
+                )
+                result.is_commented = True if "#" in line.split("=")[0] else False
 
         return result
 
     def replace_line(self, to_replace: str, replacement: str):
-        with fileinput.input(files=self.rc_conf_file, inplace=True, backup='.bak') as f:
+        with fileinput.input(files=self.rc_conf_file, inplace=True, backup=".bak") as f:
             for line in f:
                 if to_replace in line:
                     print(replacement.strip())
@@ -95,7 +101,7 @@ class NetBsdRc:
 
     def add_line(self, rc_string: str):
         with open(self.rc_conf_file, "a") as f:
-            f.write(rc_string)
+            f.writeln(rc_string)
 
     @property
     def flag_types(self):
@@ -107,13 +113,13 @@ class NetBsdRc:
 
     @property
     def enabling_value(self):
-        return ['YES', 'TRUE', 'ON', '1', 'NO', 'FALSE', 'OFF', '0']
+        return ["YES", "TRUE", "ON", "1", "NO", "FALSE", "OFF", "0"]
 
     def check_input_format(self, rc_string: str) -> bool:
 
-        if not bool(re.search(r'\w.*?=\w.*?', rc_string)):
+        if not bool(re.search(r"\w.*?=\w.*?", rc_string)):
             return False
-        if rc_string.split('=')[1] not in self.enabling_value:
+        if rc_string.split("=")[1] not in self.enabling_value:
             return False
 
         return True
