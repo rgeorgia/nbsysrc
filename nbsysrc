@@ -54,14 +54,16 @@ def read_args():
         help="Display the /etc/rc.conf file.",
     )
     parser.add_argument(
-        "-i", "--inter",
+        "-i",
+        "--inter",
         dest="inter",
         action="store_true",
         help="Uses interactive mode. Gives the user a chance to say No to a possible change.",
     )
 
     parser.add_argument(
-        "-v", "--verbose",
+        "-v",
+        "--verbose",
         dest="verbose",
         action="store_true",
         help="Prints a lot of stuff to the screen so you can see what's going on.",
