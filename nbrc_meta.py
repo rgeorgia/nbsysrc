@@ -4,6 +4,8 @@ import re
 from collections import namedtuple
 from pathlib import Path
 
+class NetBsdRcException(Exception):
+    pass
 
 class NetBsdRc:
     """base class """
@@ -36,8 +38,11 @@ class NetBsdRc:
         return f"{self.root_dir}etc/rc.local"
 
     def read_rc_conf(self):
-        with open(self.rc_conf_file) as f_name:
-            data = f_name.readlines()
+        try:
+            with open(self.rc_conf_file) as f_name:
+                data = f_name.readlines()
+        except FileNotFoundError as e:
+            raise NetBsdRcException(f"{self.__class__.__name__} : {e}")
         return data
 
     def read_rc_local(self):

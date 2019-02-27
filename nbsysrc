@@ -105,12 +105,14 @@ def lookup_up(rc_string):
 def main():
     """main -  it all starts here"""
     args = read_args()
-    test_data_dir = (
-        lambda x: "".join(args.test_dir) if args.test_dir is not None else ""
-    )(args)
+    test_data_dir = (lambda x: "".join(args.test_dir) if args.test_dir is not None else "")(args)
     rc_data = NetBsdRc(test_data_dir=test_data_dir + "/")
 
-    rc_file_data = rc_data.read_rc_conf()
+    try:
+        rc_file_data = rc_data.read_rc_conf()
+    except Exception as e:
+        print(f"{e}. Looks like you might not be on NetBSD or your rc.conf is missing. Yikes!", file=sys.stderr)
+        sys.exit(2)
 
     etc_rcd_files = rc_data.rc_dot_d_files(rc_data.etc_rc_path)
     example_rcd_files = rc_data.rc_dot_d_files(rc_data.example_rc_path)
@@ -134,15 +136,12 @@ def main():
         result = rc_data.service_in_rc_conf(
             service_key=service, service_value=value, file_data=rc_file_data
         )
-        if result.found and result.is_same and not result.is_commented:
+        if result.found and result.is_same and not result.is_commented and (args.inter or args.verbose):
             print(
                 f"Service {result.line_value} at line {result.line_number}, doing nothing"
             )
-            print("bye")
             sys.exit(0)
-        elif (result.found and not result.is_same) or (
-            result.found and result.is_commented
-        ):
+        elif (result.found and not result.is_same) or (result.found and result.is_commented):
             answer = input(
                 f"You want to change ({result.line_value}) to "
                 f"({args.rc_string})? [y/N]~> "
