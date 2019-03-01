@@ -133,28 +133,21 @@ def main():
 
         service = args.rc_string.split("=")[0]
         value = args.rc_string.split("=")[1]
-        result = rc_data.service_in_rc_conf(
-            service_key=service, service_value=value, file_data=rc_file_data
-        )
-        if result.found and result.is_same and not result.is_commented and (args.inter or args.verbose):
-            print(
-                f"Service {result.line_value} at line {result.line_number}, doing nothing"
-            )
+        result = rc_data.service_in_rc_conf(service_key=service, service_value=value, file_data=rc_file_data)
+
+        if (result.found and result.is_same and not result.is_commented) and args.inter:
+            print(f"Service {result.line_value} at line {result.line_number}, doing nothing")
             sys.exit(0)
         elif (result.found and not result.is_same) or (result.found and result.is_commented):
-            answer = input(
-                f"You want to change ({result.line_value}) to "
-                f"({args.rc_string})? [y/N]~> "
-            )
-            if answer == "y":
-                rc_data.replace_line(
-                    replacement=args.rc_string, to_replace=result.line_value
-                )
+            if args.inter:
+                answer = input(f"You want to change ({result.line_value}) to ({args.rc_string})? [y/N]~> ")
+                if answer == "y":
+                    rc_data.replace_line(replacement=args.rc_string, to_replace=result.line_value)
+            else:
+                rc_data.replace_line(replacement=args.rc_string, to_replace=result.line_value)
 
         elif service not in etc_rcd_files and service not in example_rcd_files:
-            print(
-                f"Sevice {service} in not in {rc_data.etc_rc_path} or {rc_data.example_rc_path}"
-            )
+            print(f"Sevice {service} in not in {rc_data.etc_rc_path} or {rc_data.example_rc_path}")
             print(f"You will need to install it first.")
             sys.exit(0)
         elif service not in etc_rcd_files and service in example_rcd_files:
@@ -183,10 +176,10 @@ def main():
     if args.active_services:
         subprocess.run(["service", "-e"])
 
-    # if args.dest == 'etc':
-    #     prt_dir(etc_rcd_files)
-    # elif args.dest == 'downloaded':
-    #     prt_dir(example_rcd_files)
+    if args.dest == 'etc':
+        prt_dir(etc_rcd_files)
+    elif args.dest == 'downloaded':
+        prt_dir(example_rcd_files)
 
 
 if __name__ == "__main__":
