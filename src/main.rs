@@ -1,11 +1,9 @@
-use os_type ;
-use std::env::consts::OS ;
+// use std::env ;
 mod usage_help ;
 
 extern crate whoami ;
 
 fn main() {
-	//let os = os_type::current_platform() ;
 
     println!("Hello, world!");
 	usage_help::print_help() ;
