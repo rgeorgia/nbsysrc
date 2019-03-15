@@ -38,7 +38,6 @@ fn main() {
 
 	// usage_help::print_help() ;
 	// usage_help::print_usage() ;
-
 	// println!("Operating System is: {}", whoami::os()) ;
 	// println!("Operating System for platforms: {:?}", std::env::consts::OS) ;
 	// println!("The environment is: {}", whoami::env()) ;
