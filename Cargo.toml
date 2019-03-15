@@ -6,4 +6,4 @@ edition = "2018"
 
 [dependencies]
 whoami = '*'
-clap = '*'
+clap = '2.32'
