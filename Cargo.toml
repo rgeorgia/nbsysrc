@@ -1,9 +1,9 @@
 [package]
-name = "netbsd-sysrc"
+name = "nbsysrc"
 version = "0.1.0"
 authors = ["Ron Georgia <rong1611@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-whoami = '*'
+whoami = '0.4.1'
 clap = '2.32'
