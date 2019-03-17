@@ -28,8 +28,7 @@ fn main() {
 			.long("list-all"))
 		.arg(Arg::with_name("list")
 		// need to add choices [etc or installed]
-			.help("List available services. --list etc lists everything in the /etc/rc.d dir. 
-While installed lists /usr/pkg/share/examples/rc.d\n")
+			.help("List available services. --list etc lists everything in the /etc/rc.d dir.\nWhile installed lists /usr/pkg/share/examples/rc.d\n")
 			.long("list")
 			.conflicts_with("service")
 			.possible_values(&["etc", "installed"])
