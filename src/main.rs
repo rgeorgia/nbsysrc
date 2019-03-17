@@ -1,16 +1,18 @@
 extern crate whoami ;
-#[macro_use]
+// #[macro_use]
 extern crate clap ;
 
 use clap::{Arg, App, ArgGroup} ;
 
 fn main() {
 	let mut enabling = true  ;
+	let mut test_dir = String::new() ;
 
     let matches = App::new("args-ex")
+	// The service arg and the options are mutually exclusive. The only "option" allowed with either is 
+	// the test-dir option.
                 .group(ArgGroup::with_name("flags")
-                    .required(true)
-                )
+                    .required(true))
                 .arg(Arg::with_name("service")
 	   		        .help("Key=value pair. Ex dbus=YES")
 			        .index(1)
@@ -47,13 +49,11 @@ fn main() {
 		println!("You selecte a service type entry, {} {}", matches.value_of("service").unwrap(), enabling)
 		// enabling = true ;
 	}
-	profile() ;
+
+	if let Some(o) = matches.value_of("test-dir") {
+		test_dir = o.to_string() ;
+	}
+
 } //END
 
-fn profile() {
-	println!("Operating System is: {}", whoami::os()) ;
-	println!("Operating System for platforms: {:?}", std::env::consts::OS) ;
-	println!("The environment is: {}", whoami::env()) ;
-	println!("You are on host: {}", whoami::hostname()) ;
-	println!("Your username is: {}", whoami::username()) ;
-}
+

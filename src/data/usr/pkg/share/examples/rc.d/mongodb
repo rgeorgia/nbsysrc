@@ -1,0 +1,37 @@
+#!/bin/sh
+#
+# $NetBSD: mongodb.sh,v 1.1 2015/05/02 08:10:33 ryoon Exp $
+#
+# PROVIDE: mongodb
+# REQUIRE: DAEMON LOGIN mountall
+# KEYWORD: shutdown
+#
+# You will need to set some variables in /etc/rc.conf to start MongoDB:
+#
+# mongodb=YES
+#
+# The following variables are optional:
+#
+#     mongodb_user="mongodb"	# user to run mongod as
+#     mongodb_group="mongodb"	# group to run mongod as
+#     mongodb_dbpath="/var/mongodb"	# path to MongoDB database directory
+#
+
+if [ -f /etc/rc.subr ]; then
+	. /etc/rc.subr
+fi
+
+name="mongodb"
+rcvar=${name}
+command="/usr/pkg/bin/mongod"
+: ${mongodb_user:=mongodb}
+: ${mongodb_group:=mongodb}
+: ${mongodb_dbpath:=/var/mongodb}
+pidfile="${mongodb_dbpath}/mongod.pid"
+logfile="${mongodb_dbpath}/mongod.log"
+required_dirs="${mongodb_dbpath}"
+
+command_args="--fork --logpath ${logfile} --logappend --pidfilepath ${pidfile} --dbpath ${mongodb_dbpath} --smallfiles"
+
+load_rc_config ${name}
+run_rc_command "$1"

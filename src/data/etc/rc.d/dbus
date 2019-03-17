@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# $NetBSD: dbus.sh,v 1.10 2016/05/22 23:02:24 youri Exp $
+#
+# PROVIDE: dbus
+# REQUIRE: DAEMON
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="dbus"
+rcvar=$name
+command="/usr/pkg/bin/dbus-daemon"
+command_args="--system --fork"
+pidfile="/var/run/dbus/pid"
+start_precmd=dbus_prestart
+
+dbus_prestart() {
+	dir="/var/run/dbus"
+	if test ! -d $dir; then
+		/bin/mkdir -p $dir
+		/bin/chmod 0755 $dir
+		/usr/sbin/chown dbus:dbus $dir
+	fi
+	/usr/pkg/bin/dbus-uuidgen --ensure
+}
+
+load_rc_config $name
+run_rc_command "$1"
