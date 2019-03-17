@@ -13,7 +13,8 @@ fn main() {
 	   	.arg(Arg::with_name("service")
 	   		.help("Key=value pair. Ex dbus=YES")
 			.index(1)
-	   		.required(true))
+	   		.required(true)
+		)
 		.arg(Arg::with_name("show-rc")
 			.help("Show the contents of rc.conf file")
 			.conflicts_with("service")
@@ -27,16 +28,15 @@ fn main() {
 			.conflicts_with("service")
 			.long("list-all"))
 		.arg(Arg::with_name("list")
-		// need to add choices [etc or installed]
 			.help("List available services. --list etc lists everything in the /etc/rc.d dir.\nWhile installed lists /usr/pkg/share/examples/rc.d\n")
 			.long("list")
 			.conflicts_with("service")
 			.possible_values(&["etc", "installed"])
 			.takes_value(true))
 		.arg(Arg::with_name("test-dir")
-		// requires value
 			.help("Relative path for you testing purposes")
 			.takes_value(true)
+			.value_name("TEST_DIR")
 			.long("test-dir"))
        .get_matches() ;
 
