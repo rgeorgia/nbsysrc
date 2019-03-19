@@ -1,4 +1,3 @@
-extern crate whoami ;
 // #[macro_use]
 extern crate clap ;
 extern crate os_type ;
