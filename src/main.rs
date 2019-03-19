@@ -1,6 +1,7 @@
 extern crate whoami ;
 // #[macro_use]
 extern crate clap ;
+extern crate os_type ;
 
 use clap::{Arg, App, ArgGroup} ;
 
@@ -61,10 +62,12 @@ fn main() {
 		// enabling = true ;
 	}
 
-	fn get_local_path()-> &str {
-		
-	}
+	get_local_path() ;
 
-} //END
+} //END MAIN
 
-
+fn get_local_path() {
+	let os = os_type::current_platform();
+	println!("Type: {:?}", os.os_type);
+	println!("Version: {}", os.version);
+}
