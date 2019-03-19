@@ -4,9 +4,20 @@ extern crate clap ;
 
 use clap::{Arg, App, ArgGroup} ;
 
+#[derive(Debug)]
+struct RcServiceDirs {
+	etc_rcd_path: String,
+	example_rcd_path: String, 
+}
+
+impl RcServiceDirs {
+	fn new(etc_rcd_path: String, example_rcd_path: String)-> RcServiceDirs {
+		RcServiceDirs {etc_rcd_path, example_rcd_path }
+	}
+}
+
 fn main() {
 	let mut enabling = true  ;
-	let mut test_dir = String::new() ;
 
     let matches = App::new("args-ex")
 	// The service arg and the options are mutually exclusive. The only "option" allowed with either is 
@@ -50,8 +61,8 @@ fn main() {
 		// enabling = true ;
 	}
 
-	if let Some(o) = matches.value_of("test-dir") {
-		test_dir = o.to_string() ;
+	fn get_local_path()-> &str {
+		
 	}
 
 } //END
