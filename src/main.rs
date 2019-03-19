@@ -4,6 +4,7 @@ extern crate clap ;
 extern crate os_type ;
 
 use clap::{Arg, App, ArgGroup} ;
+use std::process::Command;
 
 #[derive(Debug)]
 struct RcServiceDirs {
@@ -63,6 +64,7 @@ fn main() {
 	}
 
 	get_local_path() ;
+	let notmac = is_os_x() ;
 
 } //END MAIN
 
@@ -70,4 +72,16 @@ fn get_local_path() {
 	let os = os_type::current_platform();
 	println!("Type: {:?}", os.os_type);
 	println!("Version: {}", os.version);
+
+}
+
+fn is_os_x() -> bool {
+    match Command::new("sw_vers").output() {
+        Ok(output) => {
+			println!("{:?}", output) ;
+			output.status.success()
+		} ,
+			
+        Err(_) => false
+    }
 }
