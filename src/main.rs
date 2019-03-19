@@ -64,7 +64,11 @@ fn main() {
 	}
 
 	get_local_path() ;
-	let notmac = is_os_x() ;
+	let notmac = is_netbsd() ;
+    let nb_output = Command::new("uname").arg("-s").output().expect("failed to execute uname") ;
+    println!("Status: {}", nb_output.status) ;
+    println!("stdout: {}", String::from_utf8_lossy(&nb_output.stdout)) ;
+    println!("stderr: {}", String::from_utf8_lossy(&nb_output.stderr)) ;
 
 } //END MAIN
 
@@ -75,10 +79,10 @@ fn get_local_path() {
 
 }
 
-fn is_os_x() -> bool {
-    match Command::new("sw_vers").output() {
+fn is_netbsd() -> bool {
+    match Command::new("uname -s").output() {
         Ok(output) => {
-			println!("{:?}", output) ;
+			println!("This should be interesting {:?}", output) ;
 			output.status.success()
 		} ,
 			
