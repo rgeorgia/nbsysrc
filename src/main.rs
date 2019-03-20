@@ -63,28 +63,24 @@ fn main() {
 	}
 
 	get_local_path() ;
-	let notmac = is_netbsd() ;
-    let nb_output = Command::new("uname").arg("-s").output().expect("failed to execute uname") ;
-    println!("Status: {}", nb_output.status) ;
-    println!("stdout: {}", String::from_utf8_lossy(&nb_output.stdout)) ;
-    println!("stderr: {}", String::from_utf8_lossy(&nb_output.stderr)) ;
+	println!("{}", is_netbsd()) ;
 
 } //END MAIN
 
 fn get_local_path() {
-	let os = os_type::current_platform();
-	println!("Type: {:?}", os.os_type);
-	println!("Version: {}", os.version);
 
+    let nb_output = Command::new("uname").arg("-s").output()
+        .expect("failed to execute uname") ;
+    
+    println!("Status: {}", nb_output.status) ;
+    println!("stdout: {}", String::from_utf8_lossy(&nb_output.stdout)) ;
+    println!("stderr: {}", String::from_utf8_lossy(&nb_output.stderr)) ;
 }
 
 fn is_netbsd() -> bool {
     match Command::new("uname -s").output() {
-        Ok(output) => {
-			println!("This should be interesting {:?}", output) ;
-			output.status.success()
-		} ,
-			
+        Ok(output) =>
+                output.status.success() ,
         Err(_) => false
     }
 }
