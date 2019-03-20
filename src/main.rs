@@ -62,20 +62,26 @@ fn main() {
 		// enabling = true ;
 	}
 
-	get_local_path() ;
-	println!("{}", is_netbsd()) ;
-
+    get_os_bsd() ;
+    get_bsd_version() ;
 } //END MAIN
 
-fn get_local_path() {
+fn get_os_bsd() {
 
     let nb_output = Command::new("uname").arg("-s").output()
         .expect("failed to execute uname") ;
     
-    println!("Status: {}", nb_output.status) ;
-    println!("stdout: {}", String::from_utf8_lossy(&nb_output.stdout)) ;
-    println!("stderr: {}", String::from_utf8_lossy(&nb_output.stderr)) ;
+    println!("OS stdout: {}", String::from_utf8_lossy(&nb_output.stdout)) ;
 }
+
+fn get_bsd_version() {
+
+    let nb_output = Command::new("uname").arg("-r").output()
+        .expect("failed to execute uname") ;
+    
+    println!("Version stdout: {}", String::from_utf8_lossy(&nb_output.stdout)) ;
+}
+
 
 fn is_netbsd() -> bool {
     match Command::new("uname -s").output() {
