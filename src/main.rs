@@ -64,6 +64,7 @@ fn main() {
 
     get_os_bsd() ;
     get_bsd_version() ;
+    println!("is BSD: {}",is_netbsd()) ;
 } //END MAIN
 
 fn get_os_bsd() {
@@ -84,9 +85,11 @@ fn get_bsd_version() {
 
 
 fn is_netbsd() -> bool {
-    match Command::new("uname -s").output() {
-        Ok(output) =>
-                output.status.success() ,
-        Err(_) => false
+    let output = Command::new("uname").arg("-s").output()
+        .expect("failed to execute uname -s") ;
+    if String::from_utf8_lossy(&output.stdout).contains("BSD") {
+        true
+    } else {
+        false
     }
 }
