@@ -67,6 +67,7 @@ fn main() {
     println!("is BSD: {}",is_netbsd()) ;
 } //END MAIN
 
+
 fn get_os_bsd() {
 
     let nb_output = Command::new("uname").arg("-s").output()
@@ -74,6 +75,7 @@ fn get_os_bsd() {
     
     println!("OS stdout: {}", String::from_utf8_lossy(&nb_output.stdout)) ;
 }
+ 
 
 fn get_bsd_version() {
 
