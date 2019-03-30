@@ -5,17 +5,7 @@ extern crate os_type ;
 use clap::{Arg, App, ArgGroup} ;
 use std::process::Command;
 
-#[derive(Debug)]
-struct RcServiceDirs {
-	etc_rcd_path: String,
-	example_rcd_path: String, 
-}
 
-impl RcServiceDirs {
-	fn new(etc_rcd_path: String, example_rcd_path: String)-> RcServiceDirs {
-		RcServiceDirs {etc_rcd_path, example_rcd_path }
-	}
-}
 
 fn main() {
 	let mut enabling = true  ;
@@ -62,27 +52,31 @@ fn main() {
 		// enabling = true ;
 	}
 
-    get_os_bsd() ;
-    get_bsd_version() ;
-    println!("is BSD: {}",is_netbsd()) ;
+    if is_netbsd() {
+        println!("I am BSD of type: {}", get_os_bsd()) ;
+        println!("My version is: {}", get_bsd_version()) ;
+    } 
+   
+    
 } //END MAIN
 
 
-fn get_os_bsd() {
+fn get_os_bsd() -> String {
 
     let nb_output = Command::new("uname").arg("-s").output()
         .expect("failed to execute uname") ;
     
-    println!("OS stdout: {}", String::from_utf8_lossy(&nb_output.stdout)) ;
+    let result = String::from_utf8_lossy(&nb_output.stdout) ;
+    result.to_string()
 }
  
 
-fn get_bsd_version() {
+fn get_bsd_version() -> String {
 
     let nb_output = Command::new("uname").arg("-r").output()
         .expect("failed to execute uname") ;
     
-    println!("Version stdout: {}", String::from_utf8_lossy(&nb_output.stdout)) ;
+    String::from_utf8_lossy(&nb_output.stdout).to_string()
 }
 
 
