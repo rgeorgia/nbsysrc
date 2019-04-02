@@ -6,5 +6,5 @@ edition = "2018"
 
 [dependencies]
 clap = '2.32'
-# os_type = '2.2.0'
-os_type = { path = "/Users/rgeorgia/workspace/Rust_Projects/os_type" }
+os_type = '2.2.0'
+# os_type = { path = "/home/rgeorgia/workspace/os_type" }
