@@ -5,10 +5,12 @@ extern crate os_type;
 use clap::{App, Arg, ArgGroup};
 use std::process::Command;
 
-fn main() {
-    let mut enabling = true;
+mod nbrc ;
 
-    let matches = App::new("args-ex")
+fn main() {
+    let mut enabling: bool = true;
+
+    let matches = App::new("cli-args")
 	// The service arg and the options are mutually exclusive. The only "option" allowed with either is 
 	// the test-dir option.
                 .group(ArgGroup::with_name("flags")
@@ -72,6 +74,7 @@ fn get_os_bsd() -> String {
     let result = String::from_utf8_lossy(&nb_output.stdout);
     result.to_string()
 }
+
 
 fn get_bsd_version() -> String {
     let nb_output = Command::new("uname")
