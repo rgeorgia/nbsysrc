@@ -1,16 +1,16 @@
 // #[macro_use]
-extern crate clap ;
-extern crate os_type ;
+extern crate clap;
+extern crate os_type;
 
-use clap::{Arg, App, ArgGroup} ;
+use clap::{App, Arg, ArgGroup};
 use std::process::Command;
 
-
+mod nbrc ;
 
 fn main() {
-	let mut enabling = true  ;
+    let mut enabling: bool = true;
 
-    let matches = App::new("args-ex")
+    let matches = App::new("cli-args")
 	// The service arg and the options are mutually exclusive. The only "option" allowed with either is 
 	// the test-dir option.
                 .group(ArgGroup::with_name("flags")
@@ -43,46 +43,53 @@ fn main() {
                     .takes_value(true))
                 .get_matches();
 
-	if matches.value_of("service").unwrap().contains(&"flag") {
-		enabling = false ;
-		println!("You selected a flag type entry, {} {}",  matches.value_of("service").unwrap(), enabling) ;
-		
-	} else {
-		println!("You selecte a service type entry, {} {}", matches.value_of("service").unwrap(), enabling)
-		// enabling = true ;
-	}
+    if matches.value_of("service").unwrap().contains(&"flag") {
+        enabling = false;
+        println!(
+            "You selected a flag type entry, {} {}",
+            matches.value_of("service").unwrap(),
+            enabling
+        );
+    } else {
+        println!(
+            "You selecte a service type entry, {} {}",
+            matches.value_of("service").unwrap(),
+            enabling
+        )
+        // enabling = true ;
+    }
 
     if is_netbsd() {
-        println!("I am BSD of type: {}", get_os_bsd()) ;
-        println!("My version is: {}", get_bsd_version()) ;
-    } 
-   
-    
+        println!("I am BSD of type: {}", get_os_bsd());
+        println!("My version is: {}", get_bsd_version());
+    }
 } //END MAIN
 
-
 fn get_os_bsd() -> String {
+    let nb_output = Command::new("uname")
+        .arg("-s")
+        .output()
+        .expect("failed to execute uname");
 
-    let nb_output = Command::new("uname").arg("-s").output()
-        .expect("failed to execute uname") ;
-    
-    let result = String::from_utf8_lossy(&nb_output.stdout) ;
+    let result = String::from_utf8_lossy(&nb_output.stdout);
     result.to_string()
 }
- 
+
 
 fn get_bsd_version() -> String {
+    let nb_output = Command::new("uname")
+        .arg("-r")
+        .output()
+        .expect("failed to execute uname");
 
-    let nb_output = Command::new("uname").arg("-r").output()
-        .expect("failed to execute uname") ;
-    
     String::from_utf8_lossy(&nb_output.stdout).to_string()
 }
 
-
 fn is_netbsd() -> bool {
-    let output = Command::new("uname").arg("-s").output()
-        .expect("failed to execute uname -s") ;
+    let output = Command::new("uname")
+        .arg("-s")
+        .output()
+        .expect("failed to execute uname -s");
     if String::from_utf8_lossy(&output.stdout).contains("BSD") {
         true
     } else {

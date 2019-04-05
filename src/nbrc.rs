@@ -1,47 +1,45 @@
-use std::env ;
 use std::fs ;
 
+// allowable values
 
-#[derive(Debug, Copy, PartialEq)]
+#[derive(Debug, PartialEq)]
+#[allow(dead_code)]
 pub struct RcConfFile {
-    rc_conf_path: String,
-	etc_rcd_path: String,
-	example_rcd_path: String,
-	rc_conf_name: String,
-	rc_local_name: String
+    location: String,	// fully qualified path
+	name: String, 		// name of the file, defaults to rc.conf
+	content: String, 	// contents of the file
+	permissions: u16,	// file permissions, default is 644
+	owner: String,		// file owner, default is root
+	group: String		// owning group, default is wheel
+
 }
 
+// data or properties
+#[allow(dead_code)]
 impl RcConfFile {
-	const RC_CONF_PATH: String = "/etc".to_string() ;
-	const ECT_RCD_PATH: String = "/etc/rc.d".to_string() ;
-	const EXAMPLE_RCD_PATH: String = "/usr/pkg/share/examples/rc.d".to_string() ;
-	const RC_CONF_NAME: String = "rc.conf".to_string() ;
-	const RC_LOCAL_NAME: String = "rc.local".to_string() ;
-
-	fn default() -> RcConfFile {
-		RcConfFile {
-			rc_conf_path: RC_CONF_PATH:,
-			etc_rcd_path: ECT_RCD_PATH,
-			example_rcd_path: EXAMPLE_RCD_PATH,
-			rc_conf_name: RC_CONF_NAME,
-			rc_local_name: RC_LOCAL_NAME
-		}
-	} // end default
-
-	fn with_test(test_dir: &str) -> RcConfFile {
-		RcConfFile {
-			rc_conf_path: concat!(&test_dir, RC_CONF_PATH),
-			etc_rcd_path: concat!(&test_dir, ECT_RCD_PATH),
-			example_rcd_path: concat!(&test_dir, EXAMPLE_RCD_PATH),
-			rc_conf_name: RC_CONF_NAME,
-			rc_local_name: RC_LOCAL_NAME
-		}
-	} // end with_test
-} // end imp RcConfFile
-
-impl RcConfFile {
-	fn read_file(&self, file_name: &str) -> String {
-		// read file_name and return contents
-		
+	fn fqn(&self) -> String {
+		format!("{}/{}", self.location, self.name)
 	}
+}
+// methods
+#[allow(dead_code)]
+impl RcConfFile {
+	fn read_file(&mut self) -> String {
+		//read the file and return the content
+		let contents = fs::read_to_string(self.fqn())
+			.expect("Could not read file") ;
+		contents
+	}
+}
+
+// functions, not associated
+#[allow(dead_code)]
+impl RcConfFile {
+	fn is_valid_service(value: &str) -> bool {
+    	match value {
+        	"YES" | "NO" | "TRUE" | "FALSE" | "ON" | "OFF" | "0" | "1" => true,
+        	_ => false,
+    	}
+	} // end is_valid_service
+
 }
