@@ -6,5 +6,5 @@ edition = "2018"
 
 [dependencies]
 clap = '2.32'
-os_type = '2.2.0'
+nix = '0.13.0'
 # os_type = { path = "/home/rgeorgia/workspace/os_type" }

@@ -1,6 +1,6 @@
 // #[macro_use]
 extern crate clap;
-extern crate os_type;
+extern crate nix;
 
 use clap::{App, Arg, ArgGroup};
 use std::process::Command;
