@@ -7,12 +7,13 @@ use std::fs ;
 pub struct RcConfFile {
     location: String,	// fully qualified path
 	name: String, 		// name of the file, defaults to rc.conf
-	content: String, 	// contents of the file
-	permissions: u16,	// file permissions, default is 644
-	owner: String,		// file owner, default is root
-	group: String		// owning group, default is wheel
+//	content: String, 	// contents of the file
+//	permissions: u16,	// file permissions, default is 644
+//	owner: String,		// file owner, default is root
+//	group: String		// owning group, default is wheel
 
 }
+
 
 // data or properties
 #[allow(dead_code)]

@@ -4,6 +4,7 @@ extern crate nix;
 
 use clap::{App, Arg, ArgGroup};
 use std::process::Command;
+use crate::nbrc::RcConfFile;
 
 mod nbrc ;
 
@@ -43,6 +44,13 @@ fn main() {
                     .takes_value(true))
                 .get_matches();
 
+    if matces.value_of("test-dir").unwrap() {
+        let rc_file = RcConfFile {
+            location: String::from(matches.value_of("test-dir").unwrap()),
+            name: String::from("rc.conf")
+
+        } ;
+    }
     if matches.value_of("service").unwrap().contains(&"flag") {
         enabling = false;
         println!(
@@ -95,4 +103,8 @@ fn is_netbsd() -> bool {
     } else {
         false
     }
+}
+
+fn show_rc() {
+
 }
