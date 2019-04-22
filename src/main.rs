@@ -10,6 +10,7 @@ mod nbrc ;
 
 fn main() {
     let mut enabling: bool = true;
+    let mut nbrc = RcConfFile {location: "/etc/".to_string(), name: "rc.conf".to_string()} ;
 
     let matches = App::new("cli-args")
 	// The service arg and the options are mutually exclusive. The only "option" allowed with either is 
@@ -20,8 +21,8 @@ fn main() {
 	   		        .help("Key=value pair. Ex dbus=YES")
 			        .index(1)
                     .group("flags"))
-                .arg(Arg::with_name("show-rc")
-                    .long("show-rc")
+                .arg(Arg::with_name("showrc")
+                    .long("showrc")
                     .help("Show the contents of rc.conf file")
                     .group("flags"))
                 .arg(Arg::with_name("test-dir")
@@ -43,13 +44,14 @@ fn main() {
             matches.value_of("service").unwrap(),
             enabling
         )
-        // enabling = true ;
     }
 
     if is_netbsd() {
         println!("I am BSD of type: {}", get_os_bsd());
         println!("My version is: {}", get_bsd_version());
     }
+    println!("{}", nbrc.read_file()) ;
+
 } //END MAIN
 
 fn get_os_bsd() -> String {
