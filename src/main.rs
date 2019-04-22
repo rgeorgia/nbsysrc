@@ -24,33 +24,12 @@ fn main() {
                     .long("show-rc")
                     .help("Show the contents of rc.conf file")
                     .group("flags"))
-                .arg(Arg::with_name("list-rc")
-                    .long("list-rc")
-                    .help("List active services launched from /etc/rc.conf")
-                    .group("flags"))
-                .arg(Arg::with_name("list-all")
-                    .help("Show all service that are activated at startup.")
-                    .long("list-all")
-                    .group("flags"))
-                .arg(Arg::with_name("list")
-                    .help("List available services. --list etc lists everything in the /etc/rc.d dir.\nWhile installed lists /usr/pkg/share/examples/rc.d\n")
-                    .long("list")
-                    .possible_values(&["etc", "installed"])
-                    .takes_value(true)
-                    .group("flags"))
                 .arg(Arg::with_name("test-dir")
                     .long("test-dir")
                     .value_name("TEST_DIR")
                     .takes_value(true))
                 .get_matches();
 
-    if matces.value_of("test-dir").unwrap() {
-        let rc_file = RcConfFile {
-            location: String::from(matches.value_of("test-dir").unwrap()),
-            name: String::from("rc.conf")
-
-        } ;
-    }
     if matches.value_of("service").unwrap().contains(&"flag") {
         enabling = false;
         println!(
