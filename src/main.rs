@@ -9,12 +9,17 @@ use crate::nbrc::RcConfFile;
 mod nbrc ;
 
 fn main() {
-    let mut enabling: bool = true;
-    let mut nbrc = RcConfFile {location: "/etc/".to_string(), name: "rc.conf".to_string()} ;
+
+    let mut nbrc = RcConfFile {
+        location: "/etc/".to_string(), 
+        name: "rc.conf".to_string(),
+        content: contents
+    } ;
 
     let matches = App::new("cli-args")
-	// The service arg and the options are mutually exclusive. The only "option" allowed with either is 
-	// the test-dir option.
+                .author("Ronverbs")
+                .version("1.0.0")
+                .about("Edits rc.conf file.")
                 .group(ArgGroup::with_name("flags")
                     .required(true))
                 .arg(Arg::with_name("service")
@@ -31,29 +36,26 @@ fn main() {
                     .takes_value(true))
                 .get_matches();
 
-    if matches.value_of("service").unwrap().contains(&"flag") {
-        enabling = false;
+    if matches.is_present("showrc") {
+        println!("{}", nbrc.read_file()) ;
+    }
+
+    else if matches.value_of("service").unwrap().contains(&"flag") {
         println!(
-            "You selected a flag type entry, {} {}",
-            matches.value_of("service").unwrap(),
-            enabling
+            "You selected a flag type entry, {}",
+            matches.value_of("service").unwrap()
         );
     } else {
         println!(
-            "You selecte a service type entry, {} {}",
-            matches.value_of("service").unwrap(),
-            enabling
-        )
+            "You selecte a service type entry, {}",
+            matches.value_of("service").unwrap()
+        ) ;
     }
 
-    if is_netbsd() {
-        println!("I am BSD of type: {}", get_os_bsd());
-        println!("My version is: {}", get_bsd_version());
-    }
-    println!("{}", nbrc.read_file()) ;
 
 } //END MAIN
 
+#[allow(dead_code)]
 fn get_os_bsd() -> String {
     let nb_output = Command::new("uname")
         .arg("-s")
@@ -64,7 +66,7 @@ fn get_os_bsd() -> String {
     result.to_string()
 }
 
-
+#[allow(dead_code)]
 fn get_bsd_version() -> String {
     let nb_output = Command::new("uname")
         .arg("-r")
@@ -74,6 +76,7 @@ fn get_bsd_version() -> String {
     String::from_utf8_lossy(&nb_output.stdout).to_string()
 }
 
+#[allow(dead_code)]
 fn is_netbsd() -> bool {
     let output = Command::new("uname")
         .arg("-s")
@@ -86,6 +89,3 @@ fn is_netbsd() -> bool {
     }
 }
 
-fn show_rc() {
-
-}
