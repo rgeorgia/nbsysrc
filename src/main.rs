@@ -9,12 +9,14 @@ use crate::nbrc::RcConfFile;
 mod nbrc ;
 
 fn main() {
-
-    let mut nbrc = RcConfFile {
-        location: "/etc/".to_string(), 
-        name: "rc.conf".to_string(),
-        content: contents
-    } ;
+//    let rc_content = read_file("/etc/rc.conf") ;
+//    let mut nbrc = RcConfFile {
+//        location: "/etc/".to_string(),
+//        name: "rc.conf".to_string(),
+//        content: rc_content.to_string()
+//    } ;
+    let nbrc = RcConfFile::new("/etc".to_string(),
+                                   "rc.conf".to_string()) ;
 
     let matches = App::new("cli-args")
                 .author("Ronverbs")
@@ -37,7 +39,7 @@ fn main() {
                 .get_matches();
 
     if matches.is_present("showrc") {
-        println!("{}", nbrc.read_file()) ;
+        println!("rc.conf content");
     }
 
     else if matches.value_of("service").unwrap().contains(&"flag") {
@@ -52,8 +54,22 @@ fn main() {
         ) ;
     }
 
+    fn is_valid_service(value: &str) -> bool {
+        match value {
+            "YES" | "NO" | "TRUE" | "FALSE" | "ON" | "OFF" | "0" | "1" => true,
+            _ => false,
+        }
+    } // end is_valid_service
+
 
 } //END MAIN
+
+//fn read_file(file_with_path: &str) -> String {
+//    //read the file and return the content
+//    let contents = fs::read_to_string(file_with_path)
+//                            .expect("Could not read file") ;
+//    contents
+//}
 
 #[allow(dead_code)]
 fn get_os_bsd() -> String {
