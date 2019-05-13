@@ -5,6 +5,6 @@ authors = ["Ron Georgia <rong1611@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-clap = '2.32'
+clap = '2.33'
 nix = '0.13.0'
 # os_type = { path = "/home/rgeorgia/workspace/os_type" }

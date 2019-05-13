@@ -4,19 +4,19 @@ use std::fs ;
 
 #[derive(Debug, PartialEq)]
 #[allow(dead_code)]
-pub struct RcConfFile {
-	location: String, 	// fully qualified path
-	name: String,   	// name of the file, defaults to rc.conf
-	content: String,    // contents of the file
+pub struct ConfFile {
+	pub dir_location: String, 	// fully qualified path
+	pub name: String,   	// name of the file, defaults to rc.conf
+	pub content: String,    // contents of the file
 }
 
 // data or properties
-impl RcConfFile {
-	pub fn new(location: String, name: String) -> RcConfFile {
-		RcConfFile {
-			location,
-			name,
-			content: RcConfFile::read_file(format!("{}/{}", &location, &name))
+impl ConfFile {
+	pub fn new(location: &str, name: &str) -> ConfFile {
+		ConfFile {
+			dir_location: location.to_string(),
+			name: name.to_string(),
+			content: ConfFile::read_file(format!("{}/{}", &location, &name))
 		}
 	}
 
@@ -28,10 +28,9 @@ impl RcConfFile {
 }
 
 #[allow(dead_code)]
-impl RcConfFile {
+impl ConfFile {
 	fn fqn(&self) -> String {
-		format!("{}/{}", self.location, self.name)
+		format!("{}/{}", self.dir_location, self.name)
 	}
-
 
 }

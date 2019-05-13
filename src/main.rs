@@ -4,19 +4,14 @@ extern crate nix;
 
 use clap::{App, Arg, ArgGroup};
 use std::process::Command;
-use crate::nbrc::RcConfFile;
+use std::process ;
+use crate::nbrc::ConfFile;
 
 mod nbrc ;
 
 fn main() {
-//    let rc_content = read_file("/etc/rc.conf") ;
-//    let mut nbrc = RcConfFile {
-//        location: "/etc/".to_string(),
-//        name: "rc.conf".to_string(),
-//        content: rc_content.to_string()
-//    } ;
-    let nbrc = RcConfFile::new("/etc".to_string(),
-                                   "rc.conf".to_string()) ;
+    let rc_file_name = "rc.conf" ;
+    let mut nbrc = ConfFile::new(&"/etc".to_string(),&rc_file_name.to_string()) ;
 
     let matches = App::new("cli-args")
                 .author("Ronverbs")
@@ -38,10 +33,17 @@ fn main() {
                     .takes_value(true))
                 .get_matches();
 
-    if matches.is_present("showrc") {
-        println!("rc.conf content");
+
+    if matches.is_present("test-dir") {
+        let mut nbrc = ConfFile::new(&matches.value_of("test-dir")
+            .unwrap().to_string(),&rc_file_name.to_string()) ;
     }
 
+    if matches.is_present("showrc") {
+        println!("content") ;
+        println!("{}",nbrc.content) ;
+
+    }
     else if matches.value_of("service").unwrap().contains(&"flag") {
         println!(
             "You selected a flag type entry, {}",
@@ -52,24 +54,15 @@ fn main() {
             "You selecte a service type entry, {}",
             matches.value_of("service").unwrap()
         ) ;
+        let value: Vec<&str> = matches.value_of("service").unwrap().split("=").collect() ;
+        if !is_valid_service(&value[1]) {
+            println!("{} is not a valid value", &value[1]) ;
+            process::exit(1) ;
+        }
     }
 
-    fn is_valid_service(value: &str) -> bool {
-        match value {
-            "YES" | "NO" | "TRUE" | "FALSE" | "ON" | "OFF" | "0" | "1" => true,
-            _ => false,
-        }
-    } // end is_valid_service
-
-
+    println!("Done, line added") ;
 } //END MAIN
-
-//fn read_file(file_with_path: &str) -> String {
-//    //read the file and return the content
-//    let contents = fs::read_to_string(file_with_path)
-//                            .expect("Could not read file") ;
-//    contents
-//}
 
 #[allow(dead_code)]
 fn get_os_bsd() -> String {
@@ -105,3 +98,9 @@ fn is_netbsd() -> bool {
     }
 }
 
+fn is_valid_service(value: &str) -> bool {
+    match value {
+        "YES" | "NO" | "TRUE" | "FALSE" | "ON" | "OFF" | "0" | "1" => true,
+        _ => false,
+    }
+} // end is_valid_service
