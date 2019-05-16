@@ -87,6 +87,7 @@ fn get_bsd_version() -> String {
 
 #[allow(dead_code)]
 fn is_netbsd() -> bool {
+    //Returns the type of BSD
     let output = Command::new("uname")
         .arg("-s")
         .output()
