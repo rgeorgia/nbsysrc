@@ -17,7 +17,7 @@ struct ConfFile {
 
 fn main() {
     let rc_file_name = "rc.conf" ;
-    let rc_file: ConfFile ;
+    let default_dir = "/etc" ;
 
     let matches = App::new("cli-args")
                 .author("Ronverbs")
@@ -39,15 +39,12 @@ fn main() {
                     .takes_value(true))
                 .get_matches();
 
-
-
-    if matches.is_present("test-dir") {
-        let _rc_file = build_rc_file(matches.value_of("test-dir")
-            .unwrap(),rc_file_name) ;
-
+    let rc_file = if matches.is_present("test-dir") {
+        build_rc_file(matches.value_of("test-dir")
+            .unwrap(),rc_file_name)
     } else {
-        let _rc_file = build_rc_file(&"/etc/".to_string(),&rc_file_name.to_string()) ;
-    }
+        build_rc_file(&default_dir.to_string(),&rc_file_name.to_string())
+    } ;
 
     println!("{}",rc_file.content) ;
 
