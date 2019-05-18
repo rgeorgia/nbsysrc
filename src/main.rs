@@ -5,13 +5,19 @@ extern crate nix;
 use clap::{App, Arg, ArgGroup};
 use std::process::Command;
 use std::process ;
-use crate::nbrc::ConfFile;
+use std::fs ;
 
-mod nbrc ;
+#[derive(Debug, PartialEq)]
+#[allow(dead_code)]
+struct ConfFile {
+    dir_location: String, 	// fully qualified path
+    name: String,   	    // name of the file, defaults to rc.conf
+    content: String,        // contents of the file
+}
 
 fn main() {
     let rc_file_name = "rc.conf" ;
-    let mut nbrc = ConfFile::new(&"/etc".to_string(),&rc_file_name.to_string()) ;
+    let rc_file: ConfFile ;
 
     let matches = App::new("cli-args")
                 .author("Ronverbs")
@@ -34,14 +40,20 @@ fn main() {
                 .get_matches();
 
 
+
     if matches.is_present("test-dir") {
-        let mut nbrc = ConfFile::new(&matches.value_of("test-dir")
-            .unwrap().to_string(),&rc_file_name.to_string()) ;
+        let _rc_file = build_rc_file(matches.value_of("test-dir")
+            .unwrap(),rc_file_name) ;
+
+    } else {
+        let _rc_file = build_rc_file(&"/etc/".to_string(),&rc_file_name.to_string()) ;
     }
+
+    println!("{}",rc_file.content) ;
 
     if matches.is_present("showrc") {
         println!("content") ;
-        println!("{}",nbrc.content) ;
+
 
     }
     else if matches.value_of("service").unwrap().contains(&"flag") {
@@ -64,6 +76,14 @@ fn main() {
     println!("Done, line added") ;
 } //END MAIN
 
+fn build_rc_file(dir_location: &str, name: &str) -> ConfFile {
+    ConfFile {
+        dir_location: dir_location.to_string(),
+        name: name.to_string(),
+        content: read_file(format!("{}/{}", dir_location, name))
+    }
+}
+
 #[allow(dead_code)]
 fn get_os_bsd() -> String {
     let nb_output = Command::new("uname")
@@ -73,7 +93,7 @@ fn get_os_bsd() -> String {
 
     let result = String::from_utf8_lossy(&nb_output.stdout);
     result.to_string()
-}
+} //end get_os_bs
 
 #[allow(dead_code)]
 fn get_bsd_version() -> String {
@@ -83,7 +103,7 @@ fn get_bsd_version() -> String {
         .expect("failed to execute uname");
 
     String::from_utf8_lossy(&nb_output.stdout).to_string()
-}
+} //end get_bsd_version
 
 #[allow(dead_code)]
 fn is_netbsd() -> bool {
@@ -97,7 +117,7 @@ fn is_netbsd() -> bool {
     } else {
         false
     }
-}
+} //end is_netbsd
 
 fn is_valid_service(value: &str) -> bool {
     match value {
@@ -105,3 +125,9 @@ fn is_valid_service(value: &str) -> bool {
         _ => false,
     }
 } // end is_valid_service
+
+fn read_file(file_with_path: String) -> String {
+    //read the file and return the content
+    fs::read_to_string(file_with_path)
+        .expect("Could not read file")
+} //end read_file
