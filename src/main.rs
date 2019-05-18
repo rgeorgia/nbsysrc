@@ -40,7 +40,7 @@ fn main() {
                     .takes_value(true))
                 .get_matches();
 
-    if !Path::new(&format!("{}/{}",default_dir, rc_file_name)).exists() {
+    if !Path::new(&format!("{}/{}",default_dir, rc_file_name)).exists() && !matches.is_present("test-dir") {
         println!("Looks like {} does not exist.", format!("{}/{}", default_dir, rc_file_name)) ;
         process::exit(1);
     }
