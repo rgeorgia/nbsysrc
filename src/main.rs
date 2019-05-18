@@ -6,6 +6,7 @@ use clap::{App, Arg, ArgGroup};
 use std::process::Command;
 use std::process ;
 use std::fs ;
+use std::path::Path ;
 
 #[derive(Debug, PartialEq)]
 #[allow(dead_code)]
@@ -39,6 +40,11 @@ fn main() {
                     .takes_value(true))
                 .get_matches();
 
+    if !Path::new(&format!("{}/{}",default_dir, rc_file_name)).exists() {
+        println!("Looks like {} does not exist.", format!("{}/{}", default_dir, rc_file_name)) ;
+        process::exit(1);
+    }
+
     let rc_file = if matches.is_present("test-dir") {
         build_rc_file(matches.value_of("test-dir")
             .unwrap(),rc_file_name)
@@ -46,11 +52,8 @@ fn main() {
         build_rc_file(&default_dir.to_string(),&rc_file_name.to_string())
     } ;
 
-    println!("{}",rc_file.content) ;
-
     if matches.is_present("showrc") {
-        println!("content") ;
-
+        println!("{}", rc_file.content) ;
 
     }
     else if matches.value_of("service").unwrap().contains(&"flag") {
