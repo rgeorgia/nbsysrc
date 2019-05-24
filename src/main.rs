@@ -131,3 +131,19 @@ fn read_file(file_with_path: String) -> String {
     fs::read_to_string(file_with_path)
         .expect("Could not read file")
 } //end read_file
+
+#[cfg(test)]
+mod tests {
+    use super::* ;
+
+    #[test]
+    fn test_is_valid_service() {
+        assert!(is_valid_service("YES")) ;
+    }
+
+    #[test]
+    fn test_is_not_valid_service() {
+        assert_eq!(is_valid_service("NOPE"), false) ;
+    }
+
+}
