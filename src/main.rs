@@ -84,16 +84,6 @@ fn build_rc_file(dir_location: &str, name: &str) -> ConfFile {
     }
 }
 
-#[allow(dead_code)]
-fn get_os_bsd() -> String {
-    let nb_output = Command::new("uname")
-        .arg("-s")
-        .output()
-        .expect("failed to execute uname");
-
-    let result = String::from_utf8_lossy(&nb_output.stdout);
-    result.to_string()
-} //end get_os_bs
 
 fn is_valid_service(value: &str) -> bool {
     match value {
