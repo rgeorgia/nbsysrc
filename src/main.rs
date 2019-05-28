@@ -95,30 +95,6 @@ fn get_os_bsd() -> String {
     result.to_string()
 } //end get_os_bs
 
-#[allow(dead_code)]
-fn get_bsd_version() -> String {
-    let nb_output = Command::new("uname")
-        .arg("-r")
-        .output()
-        .expect("failed to execute uname");
-
-    String::from_utf8_lossy(&nb_output.stdout).to_string()
-} //end get_bsd_version
-
-#[allow(dead_code)]
-fn is_netbsd() -> bool {
-    //Returns the type of BSD
-    let output = Command::new("uname")
-        .arg("-s")
-        .output()
-        .expect("failed to execute uname -s");
-    if String::from_utf8_lossy(&output.stdout).contains("BSD") {
-        true
-    } else {
-        false
-    }
-} //end is_netbsd
-
 fn is_valid_service(value: &str) -> bool {
     match value {
         "YES" | "NO" | "TRUE" | "FALSE" | "ON" | "OFF" | "0" | "1" => true,
