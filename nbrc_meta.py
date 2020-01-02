@@ -106,7 +106,7 @@ class NetBsdRc:
 
     def add_line(self, rc_string: str):
         with open(self.rc_conf_file, "a") as f:
-            f.write(rc_string)
+            f.write(f"{rc_string}\n")
 
     @property
     def flag_types(self):
