@@ -1,11 +1,12 @@
 import fileinput
-import platform
 import re
 from collections import namedtuple
 from pathlib import Path
 
+
 class NetBsdRcException(Exception):
     pass
+
 
 class NetBsdRc:
     """base class """
@@ -16,10 +17,7 @@ class NetBsdRc:
         self.local_d = "pkg"
         self._flags_types = None
 
-        if self.test_data_dir is not "/":
-            self.root_dir = self.test_data_dir
-        else:
-            self.root_dir = "/"
+        self.root_dir = self.test_data_dir if self.test_data_dir is not "/" else "/"
 
     @property
     def etc_rc_path(self):
@@ -64,7 +62,7 @@ class NetBsdRc:
 
     @staticmethod
     def service_in_rc_conf(
-        service_key: str, file_data: list, service_value: str = None
+            service_key: str, file_data: list, service_value: str = None
     ):
         # TODO: find matching lines, but that have been commented out
         result_fields = "found line_number line_value current_status desired_status is_same is_commented"
@@ -124,7 +122,4 @@ class NetBsdRc:
 
         if not bool(re.search(r"\w.*?=\w.*?", rc_string)):
             return False
-        if rc_string.split("=")[1] not in self.enabling_value:
-            return False
-
-        return True
+        return rc_string.split("=")[1] in self.enabling_value

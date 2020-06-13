@@ -150,7 +150,7 @@ def main():
             print(f"Sevice {service} in not in {rc_data.etc_rc_path} or {rc_data.example_rc_path}")
             print(f"You will need to install it first.")
             sys.exit(0)
-        elif service not in etc_rcd_files and service in example_rcd_files:
+        elif service not in etc_rcd_files:
             print(
                 f"{service} is in {rc_data.example_rc_path} but not in {rc_data.etc_rc_path}."
                 f"You will need to:\n"
